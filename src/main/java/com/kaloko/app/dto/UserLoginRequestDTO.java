@@ -1,17 +1,11 @@
 package com.kaloko.app.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class UserLoginRequestDTO {
-    @NotBlank(message = "Username is required")
-    private String username;
+public record UserLoginRequestDTO(
+        @NotBlank(message = "Username is required")
+        String username,
 
-    @NotBlank(message = "Password is required")
-    private String password;
-}
+        @NotBlank(message = "Password is required")
+        String password
+) {}

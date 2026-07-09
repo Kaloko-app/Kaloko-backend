@@ -1,14 +1,3 @@
 package com.kaloko.app.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class AuthenticationResponseDTO {
-    private String token;
-    private String refreshToken;
-    private UserResponseDTO user;
-}
+public record AuthenticationResponseDTO(String token, String refreshToken, UserResponseDTO user) {}

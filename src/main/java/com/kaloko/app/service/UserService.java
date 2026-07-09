@@ -30,18 +30,18 @@ public class UserService {
 
     @Transactional
     public AuthenticationResponseDTO register(UserRegisterRequestDTO request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
+        if (userRepository.existsByUsername(request.username())) {
             throw new UserAlreadyExistsException("Username is already taken");
         }
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new UserAlreadyExistsException("Email is already registered");
         }
 
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setGender(request.getGender());
-        user.setPassword(hashPassword(request.getPassword()));
+        user.setUsername(request.username());
+        user.setEmail(request.email());
+        user.setGender(request.gender());
+        user.setPassword(hashPassword(request.password()));
 
         User savedUser = userRepository.save(user);
         
@@ -53,11 +53,11 @@ public class UserService {
 
     @Transactional
     public AuthenticationResponseDTO login(UserLoginRequestDTO request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .or(() -> userRepository.findByEmail(request.getUsername()))
+        User user = userRepository.findByUsername(request.username())
+                .or(() -> userRepository.findByEmail(request.username()))
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
 
-        if (!verifyPassword(request.getPassword(), user.getPassword())) {
+        if (!verifyPassword(request.password(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
@@ -69,28 +69,33 @@ public class UserService {
 
     @Transactional
     public TokenRefreshResponseDTO refreshToken(RefreshTokenRequestDTO request) {
-        return refreshTokenService.findByToken(request.getRefreshToken())
+        return refreshTokenService.findByToken(request.refreshToken())
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     String token = jwtService.generateToken(user.getUsername());
-                    return new TokenRefreshResponseDTO(token, request.getRefreshToken());
+                    return new TokenRefreshResponseDTO(token, request.refreshToken());
                 })
                 .orElseThrow(() -> new InvalidTokenException("Refresh token not found"));
     }
 
     @Transactional
     public UserResponseDTO updateMetrics(UserMetricsUpdateRequestDTO request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + request.getUserId()));
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + request.userId()));
 
-        user.setCurrentWeight(request.getCurrentWeight());
-        user.setWeightGoal(request.getWeightGoal());
-        user.setHeight(request.getHeight());
-        user.setAge(request.getAge());
-        user.setActivityLevel(request.getActivityLevel());
-        user.setGender(request.getGender());
-        user.setBodyFatPercentage(request.getBodyFatPercentage());
+        String currentUsername = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!user.getUsername().equals(currentUsername)) {
+            throw new org.springframework.security.access.AccessDeniedException("You are not authorized to update these metrics");
+        }
+
+        user.setCurrentWeight(request.currentWeight());
+        user.setWeightGoal(request.weightGoal());
+        user.setHeight(request.height());
+        user.setAge(request.age());
+        user.setActivityLevel(request.activityLevel());
+        user.setGender(request.gender());
+        user.setBodyFatPercentage(request.bodyFatPercentage());
 
         calculateAndSetGoals(user);
 
