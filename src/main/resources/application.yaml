@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: kaloko-backend
+  config:
+    import: optional:file:.env[.properties]
 
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:kaloko_db}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC

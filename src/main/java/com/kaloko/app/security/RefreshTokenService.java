@@ -1,6 +1,7 @@
 package com.kaloko.app.security;
 
 import com.kaloko.app.entity.RefreshToken;
+import com.kaloko.app.entity.User;
 import com.kaloko.app.exception.TokenExpiredException;
 import com.kaloko.app.exception.UserNotFoundException;
 import com.kaloko.app.repository.RefreshTokenRepository;
@@ -27,15 +28,16 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(Long userId) {
-        RefreshToken refreshToken = new RefreshToken();
-        
-        refreshToken.setUser(userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId)));
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
+                .orElseGet(RefreshToken::new);
+
+        refreshToken.setUser(user);
         refreshToken.setToken(UUID.randomUUID().toString());
-        
-        refreshTokenRepository.deleteByUser(refreshToken.getUser());
-        
+        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+
         return refreshTokenRepository.save(refreshToken);
     }
 

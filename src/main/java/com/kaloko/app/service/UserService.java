@@ -54,6 +54,7 @@ public class UserService {
     @Transactional
     public AuthenticationResponseDTO login(UserLoginRequestDTO request) {
         User user = userRepository.findByUsername(request.getUsername())
+                .or(() -> userRepository.findByEmail(request.getUsername()))
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
 
         if (!verifyPassword(request.getPassword(), user.getPassword())) {
