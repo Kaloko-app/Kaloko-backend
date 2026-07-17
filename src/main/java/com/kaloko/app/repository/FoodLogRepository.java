@@ -3,7 +3,7 @@ package com.kaloko.app.repository;
 import com.kaloko.app.entity.FoodLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface FoodLogRepository extends JpaRepository<FoodLog, Long> {
     
-    List<FoodLog> findByUserIdAndDateBetweenOrderByDateAsc(Long userId, LocalDateTime start, LocalDateTime end);
+    List<FoodLog> findByUserIdAndDateOrderByDateAsc(Long userId, LocalDate date);
 }

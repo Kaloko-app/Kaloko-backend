@@ -3,7 +3,7 @@ package com.kaloko.app.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Log entry in the user's food diary for a specific meal.
@@ -43,12 +43,11 @@ public class FoodLog {
 
     @Column(name = "date", nullable = false)
     @ToString.Include
-    private LocalDateTime date;
+    private LocalDate date;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "meal_type", nullable = false)
+    @Column(name = "meal_name", nullable = false)
     @ToString.Include
-    private MealType mealType;
+    private String mealName;
 
     @AssertTrue(message = "Exactly one of food or recipe must be specified, not both.")
     public boolean isValidFoodOrRecipe() {

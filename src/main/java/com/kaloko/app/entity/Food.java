@@ -2,6 +2,8 @@ package com.kaloko.app.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents nutritional information of a food item per 100g.
@@ -35,4 +37,17 @@ public class Food {
 
     @Column(name = "fats")
     private Integer fats;
+
+    @ElementCollection
+    @CollectionTable(name = "food_micronutrients", joinColumns = @JoinColumn(name = "food_id"))
+    @MapKeyColumn(name = "nutrient_name")
+    @Column(name = "amount")
+    private Map<String, String> micronutrients = new HashMap<>();
+
+    @Column(name = "is_public", nullable = false)
+    private Boolean isPublic = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id")
+    private User createdBy;
 }
