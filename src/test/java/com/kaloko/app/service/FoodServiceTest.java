@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,7 +82,7 @@ class FoodServiceTest {
         FoodRequestDTO request = new FoodRequestDTO(
                 "My Private Recipe",
                 null,
-                200, 10, 20, 5, null, false
+                200, 10, 20, 5, null, false, null, null
         );
 
         FoodResponseDTO response = foodService.createFood(request);

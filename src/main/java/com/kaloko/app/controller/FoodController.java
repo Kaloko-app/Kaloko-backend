@@ -25,4 +25,14 @@ public class FoodController {
     public ResponseEntity<FoodResponseDTO> createFood(@RequestBody FoodRequestDTO request) {
         return ResponseEntity.ok(foodService.createFood(request));
     }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<List<FoodResponseDTO>> getFavorites() {
+        return ResponseEntity.ok(foodService.getFavoriteFoods());
+    }
+
+    @PostMapping("/{id}/favorite")
+    public ResponseEntity<Boolean> toggleFavorite(@PathVariable Long id) {
+        return ResponseEntity.ok(foodService.toggleFavorite(id));
+    }
 }

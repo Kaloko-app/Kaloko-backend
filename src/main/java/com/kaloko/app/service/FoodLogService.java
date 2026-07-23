@@ -62,6 +62,34 @@ public class FoodLogService {
                 .toList();
     }
 
+    @Transactional
+    public FoodLogResponseDTO updateFoodLog(Long id, Double grams) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        FoodLog log = foodLogRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Log not found"));
+
+        if (!log.getUser().getUsername().equals(currentUsername)) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        log.setGrams(grams);
+        FoodLog updated = foodLogRepository.save(log);
+        return convertToDTO(updated);
+    }
+
+    @Transactional
+    public void deleteFoodLog(Long id) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        FoodLog log = foodLogRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Log not found"));
+
+        if (!log.getUser().getUsername().equals(currentUsername)) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        foodLogRepository.delete(log);
+    }
+
     private FoodLogResponseDTO convertToDTO(FoodLog log) {
         Food food = log.getFood();
         double multiplier = log.getGrams() / 100.0;

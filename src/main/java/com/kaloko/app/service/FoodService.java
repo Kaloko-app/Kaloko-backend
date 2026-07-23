@@ -50,6 +50,8 @@ public class FoodService {
             food.setMicronutrients(request.micronutrients());
         }
         food.setIsPublic(request.isPublic() != null ? request.isPublic() : false);
+        food.setServingSize(request.servingSize());
+        food.setServingUnit(request.servingUnit());
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(currentUsername)
@@ -58,6 +60,35 @@ public class FoodService {
 
         Food saved = foodRepository.save(food);
         return convertToDTO(saved);
+    }
+
+    public List<FoodResponseDTO> getFavoriteFoods() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getFavoriteFoods().stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    @Transactional
+    public boolean toggleFavorite(Long foodId) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Food food = foodRepository.findById(foodId)
+                .orElseThrow(() -> new RuntimeException("Food not found"));
+
+        boolean isFav = user.getFavoriteFoods().contains(food);
+        if (isFav) {
+            user.getFavoriteFoods().remove(food);
+        } else {
+            user.getFavoriteFoods().add(food);
+        }
+        userRepository.save(user);
+        return !isFav;
     }
 
     private FoodResponseDTO convertToDTO(Food food) {
@@ -71,7 +102,9 @@ public class FoodService {
                 food.getFats(),
                 food.getMicronutrients() != null ? new HashMap<>(food.getMicronutrients()) : new HashMap<>(),
                 food.getIsPublic(),
-                food.getCreatedBy() != null ? food.getCreatedBy().getId() : null
+                food.getCreatedBy() != null ? food.getCreatedBy().getId() : null,
+                food.getServingSize(),
+                food.getServingUnit()
         );
     }
 }

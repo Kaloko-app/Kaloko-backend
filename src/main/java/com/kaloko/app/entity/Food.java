@@ -47,6 +47,12 @@ public class Food {
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic = true;
 
+    @Column(name = "serving_size")
+    private Double servingSize;
+
+    @Column(name = "serving_unit")
+    private String servingUnit;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id")
     private User createdBy;

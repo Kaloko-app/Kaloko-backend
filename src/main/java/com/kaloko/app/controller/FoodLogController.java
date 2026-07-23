@@ -29,4 +29,17 @@ public class FoodLogController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ResponseEntity.ok(foodLogService.getDailyLogs(date));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<FoodLogResponseDTO> updateFoodLog(
+            @PathVariable Long id,
+            @RequestParam Double grams) {
+        return ResponseEntity.ok(foodLogService.updateFoodLog(id, grams));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFoodLog(@PathVariable Long id) {
+        foodLogService.deleteFoodLog(id);
+        return ResponseEntity.noContent().build();
+    }
 }

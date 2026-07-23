@@ -52,7 +52,7 @@ class FoodLogServiceTest {
         testUser.setId(1L);
         testUser.setUsername("testuser");
 
-        testFood = new Food(1L, "Oats", "123", 389, 17, 66, 7, Map.of("Sal", "2g", "Vitamina B12", "5.5µg"), true, null);
+        testFood = new Food(1L, "Oats", "123", 389, 17, 66, 7, Map.of("Sal", "2g", "Vitamina B12", "5.5µg"), true, 40.0, "portion (40g)", null);
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("testuser", "password")

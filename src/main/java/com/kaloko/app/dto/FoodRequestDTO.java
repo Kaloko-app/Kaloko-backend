@@ -10,5 +10,7 @@ public record FoodRequestDTO(
         Integer carbs,
         Integer fats,
         Map<String, String> micronutrients,
-        Boolean isPublic
+        Boolean isPublic,
+        Double servingSize,
+        String servingUnit
 ) {}

@@ -12,5 +12,7 @@ public record FoodResponseDTO(
         Integer fats,
         Map<String, String> micronutrients,
         Boolean isPublic,
-        Long createdById
+        Long createdById,
+        Double servingSize,
+        String servingUnit
 ) {}
